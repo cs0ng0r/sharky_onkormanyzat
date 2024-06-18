@@ -3,32 +3,32 @@ ESX = exports['es_extended']:getSharedObject()
 
 lib.registerContext({
     id = 'onkori',
-    title = 'IIratok Igénylése',
+    title = 'Iratok Igénylése',
     options = {
         {
             title = 'Személyi Igazolvány',
             description = 'Személyi igazolvány kiadása',
-            icon = 'circle',
+            icon = 'id-card',
             onSelect = function()
-                TriggerServerEvent('sharky_onkori:giveitem', Config.Government.idcarditem)
+                TriggerServerEvent('sharky_onkori:giveitem', Config.Items.idcarditem)
             end,
 
         },
         {
             title = 'Vezetői Engedély',
             description = 'Vezetői engedély kiadása',
-            icon = 'circle',
+            icon = 'id-card',
             onSelect = function()
-                TriggerServerEvent('sharky_onkori:giveitem', Config.Government.driveritem)
+                TriggerServerEvent('sharky_onkori:giveitem', Config.Items.driveritem)
             end,
 
         },
         {
             title = 'Fegyver Engedély',
             description = 'Fegyver engedély kiadása',
-            icon = 'circle',
+            icon = 'id-card',
             onSelect = function()
-                TriggerServerEvent('sharky_onkori:giveitem', Config.Government.weaponitem)
+                TriggerServerEvent('sharky_onkori:giveitem', Config.Items.weaponitem)
             end,
 
         },
@@ -37,20 +37,12 @@ lib.registerContext({
 
 -- Spawn ped
 Citizen.CreateThread(function()
-    local hash = GetHashKey("s_m_m_doctor_01")
-    local pedType = 4
-    local pedCoords = Config.Government.location
-    local pedHeading = Config.Government.heading
-    local pedId = NetworkGetNetworkIdFromEntity(ped)
-    local ped = CreatePed(pedType, hash, pedCoords.x, pedCoords.y, pedCoords.z, pedHeading, false, false)
-    SetEntityAsMissionEntity(ped, true, true)
-    SetBlockingOfNonTemporaryEvents(ped, true)
-    SetPedCanBeTargetted(ped, false)
-    SetPedCanBeTargettedByPlayer(ped, PlayerId(), false)
-    SetEntityInvincible(ped, true)
-    FreezeEntityPosition(ped, true)
-    SetEntityHeading(ped, pedHeading)
-    SetNetworkIdCanMigrate(pedId, true)
+    local hash = GetHashKey(Config.Government.ped)
+    RequestModel(hash)
+    while not HasModelLoaded(hash) do
+        Wait(1)
+    end
+    ped = CreatePed(4, hash, Config.Government.location, Config.Government.heading, false, true)
 end)
 
 

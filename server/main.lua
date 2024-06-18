@@ -1,6 +1,6 @@
 ESX = exports['es_extended']:getSharedObject()
 
-for k, v in pairs (Config.License) do
+for k, v in pairs(Config.License) do
     local hasAccess = v
     return hasAccess
 end
@@ -13,12 +13,6 @@ AddEventHandler('sharky_onkori:giveitem', function(item)
     if not xPlayer then
         return
     end
-
-    ESX.TriggerServerCallback('esx_license:checkLicense', function(hasLicense)
-        if not hasLicense and item ~= Config.Government.idcarditem then
-            xPlayer.showNotification('Nincs ilyen engedélyed!')
-        end
-    end, xPlayer.source, hasAccess)
 
     xPlayer.addInventoryItem(item, 1)
 end)
