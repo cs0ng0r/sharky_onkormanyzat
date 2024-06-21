@@ -2,9 +2,10 @@ Config = {}
 
 
 Config.Government = {
-    location = vector3(-552.0, -190.0, 38.0),
+    ped = "u_f_m_casinocash_01",
+    location = vector3(-538.6606, -216.8566, 36.6455),
     heading = 0.0,
-    targetCoords = vector3(-552.0, -190.0, 38.0),
+    targetCoords = vector3(-538.6606, -216.8566, 37.6455),
 
 }
 

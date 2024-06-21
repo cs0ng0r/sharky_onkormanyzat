@@ -1,6 +1,14 @@
 ESX = exports['es_extended']:getSharedObject()
 
 
+AddEventHandler('onResourceStop', function(resource)
+    if resource == GetCurrentResourceName() then
+        if ped then
+            DeleteEntity(ped)
+        end
+    end
+end)
+
 lib.registerContext({
     id = 'onkori',
     title = 'Iratok Igénylése',
@@ -35,53 +43,46 @@ lib.registerContext({
     }
 })
 
--- Spawn ped
-Citizen.CreateThread(function()
+CreateThread(function()
     local hash = GetHashKey(Config.Government.ped)
-    RequestModel(hash)
-    while not HasModelLoaded(hash) do
-        Wait(1)
-    end
+    lib.requestModel(hash, 10000)
     ped = CreatePed(4, hash, Config.Government.location, Config.Government.heading, false, true)
-end)
-
-
--- Felirat megjelenítése ped felett
-
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(0)
-        local pedCoords = GetEntityCoords(ped)
-        local playerCoords = GetEntityCoords(PlayerPedId())
-        local distance = #(pedCoords - playerCoords)
-        if distance < 10 then
-            DrawText3D(pedCoords.x, pedCoords.y, pedCoords.z + 1.0, "Igénylés ~b~[Dokumentum]")
-            if distance < 1.5 and IsControlJustPressed(0, 38) then
-                lib.openContext('onkori')
-            end
+    SetEntityAsMissionEntity(ped, true, true)
+    SetBlockingOfNonTemporaryEvents(ped, true)
+    SetEntityInvincible(ped, true)
+    FreezeEntityPosition(ped, true)
+    local zone = lib.zones.sphere({
+        coords = Config.Government.location,
+        radius = 3.5,
+        debug = false,
+        inside = function()
+            DrawText3D(Config.Government.location + vec3(0, 0, 2), 'Igénylés ~b~[Dokumentumok]')
         end
-    end
+    })
+    exports.ox_target:addSphereZone({
+        coords = Config.Government.location,
+        radius = 3.5,
+        debug = false,
+        drawSprite = false,
+        options = {
+            {
+                label = 'Iratok Igénylése',
+                onSelect = function()
+                    lib.showContext('onkori')
+                end
+            }
+        }
+    })
 end)
 
-function DrawText3D(x, y, z, text)
-    local onScreen, _x, _y = World3dToScreen2d(x, y, z)
-    local px, py, pz = table.unpack(GetGameplayCamCoord())
-    local dist = GetDistanceBetweenCoords(px, py, pz, x, y, z, 1)
-    local scale = (1 / dist) * 2
-    local fov = (1 / GetGameplayCamFov()) * 100
-    local scale = scale * fov
-    if onScreen then
-        SetTextScale(0.0, 0.35)
-        SetTextFont(0)
-        SetTextProportional(1)
-        SetTextColour(255, 255, 255, 215)
-        SetTextDropshadow(0, 0, 0, 0, 255)
-        SetTextEdge(2, 0, 0, 0, 150)
-        SetTextDropShadow()
-        SetTextOutline()
-        SetTextEntry("STRING")
-        SetTextCentre(1)
-        AddTextComponentString(text)
-        DrawText(_x, _y)
-    end
+function DrawText3D(coords, text)
+    SetDrawOrigin(coords)
+    SetTextScale(0.0, 0.4)
+    SetTextFont(4)
+    SetTextCentre(1)
+    SetTextOutline()
+    BeginTextCommandDisplayText("STRING")
+    AddTextComponentString(text)
+    EndTextCommandDisplayText(0, 0)
+    ClearDrawOrigin()
 end
