@@ -9,6 +9,16 @@ AddEventHandler('onResourceStop', function(resource)
     end
 end)
 
+function checklicencebytype(type)
+    ESX.TriggerServerCallback('esx_license:checkLicense', function(hasLicense)
+        if hasLicense then
+            return true
+        else
+            return false
+        end
+    end, GetPlayerServerId(PlayerId()), type)
+end
+
 lib.registerContext({
     id = 'onkori',
     title = 'Iratok Igénylése',
@@ -27,7 +37,14 @@ lib.registerContext({
             description = 'Vezetői engedély kiadása',
             icon = 'id-card',
             onSelect = function()
-                TriggerServerEvent('sharky_onkori:giveitem', Config.Items.driveritem)
+                
+                ESX.TriggerServerCallback('esx_license:checkLicense', function(hasDriversLicense)
+                    if hasDriversLicense then
+                        TriggerServerEvent('sharky_onkori:giveitem', Config.Items.driveritem)
+                    else
+                        ESX.ShowNotification('Nincs jogosítványod!')
+                    end
+                end, GetPlayerServerId(PlayerId()), 'drive')
             end,
 
         },
@@ -35,8 +52,16 @@ lib.registerContext({
             title = 'Fegyver Engedély',
             description = 'Fegyver engedély kiadása',
             icon = 'id-card',
+            disabled = checklicencebytype('weapon'),
             onSelect = function()
-                TriggerServerEvent('sharky_onkori:giveitem', Config.Items.weaponitem)
+                
+                ESX.TriggerServerCallback('esx_license:checkLicense', function(hasWeaponsLicense)
+                    if hasWeaponsLicense then
+                        TriggerServerEvent('sharky_onkori:giveitem', Config.Items.weaponitem)
+                    else
+                        ESX.ShowNotification('Nincs jogosítványod!')
+                    end
+                end, GetPlayerServerId(PlayerId()), 'weapon')
             end,
 
         },
@@ -67,6 +92,7 @@ CreateThread(function()
         options = {
             {
                 label = 'Iratok Igénylése',
+                icon = 'fa-solid fa-id-card',
                 onSelect = function()
                     lib.showContext('onkori')
                 end

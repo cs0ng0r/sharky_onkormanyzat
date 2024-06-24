@@ -3,14 +3,14 @@ Config = {}
 
 Config.Government = {
     ped = "u_f_m_casinocash_01",
-    location = vector3(-538.6606, -216.8566, 36.6455),
-    heading = 0.0,
-    targetCoords = vector3(-538.6606, -216.8566, 37.6455),
+    location = vector3(-553.6076, -189.4497, 38.2197 -1),
+    heading = 209.3708,
+    targetCoords = vector3(-553.6076, -189.4497, 38.2197),
 
 }
 
 Config.Items = {
-    idcarditem = "identification",
+    idcarditem = "idcard",
     driveritem = "driverlicense",
     weaponitem = "weaponlicense"
 }
