@@ -9,16 +9,6 @@ AddEventHandler('onResourceStop', function(resource)
     end
 end)
 
-function checklicencebytype(type)
-    ESX.TriggerServerCallback('esx_license:checkLicense', function(hasLicense)
-        if hasLicense then
-            return true
-        else
-            return false
-        end
-    end, GetPlayerServerId(PlayerId()), type)
-end
-
 lib.registerContext({
     id = 'onkori',
     title = 'Iratok Igénylése',
