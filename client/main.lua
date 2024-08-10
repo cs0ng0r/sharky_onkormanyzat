@@ -1,17 +1,7 @@
-ESX = exports['es_extended']:getSharedObject()
-
-
-AddEventHandler('onResourceStop', function(resource)
-    if resource == GetCurrentResourceName() then
-        if ped then
-            DeleteEntity(ped)
-        end
-    end
-end)
-
 lib.registerContext({
-    id = 'onkori',
+    id = 'iratok',
     title = 'Iratok Igénylése',
+    menu = 'onkori',
     options = {
         {
             title = 'Személyi Igazolvány',
@@ -27,7 +17,6 @@ lib.registerContext({
             description = 'Vezetői engedély kiadása',
             icon = 'id-card',
             onSelect = function()
-                
                 ESX.TriggerServerCallback('esx_license:checkLicense', function(hasDriversLicense)
                     if hasDriversLicense then
                         TriggerServerEvent('sharky_onkori:giveitem', Config.Items.driveritem)
@@ -42,9 +31,7 @@ lib.registerContext({
             title = 'Fegyver Engedély',
             description = 'Fegyver engedély kiadása',
             icon = 'id-card',
-            disabled = checklicencebytype('weapon'),
             onSelect = function()
-                
                 ESX.TriggerServerCallback('esx_license:checkLicense', function(hasWeaponsLicense)
                     if hasWeaponsLicense then
                         TriggerServerEvent('sharky_onkori:giveitem', Config.Items.weaponitem)
@@ -52,6 +39,22 @@ lib.registerContext({
                         ESX.ShowNotification('Nincs jogosítványod!')
                     end
                 end, GetPlayerServerId(PlayerId()), 'weapon')
+            end,
+
+        },
+    }
+})
+
+lib.registerContext({
+    id = 'onkori',
+    title = 'Munkaügyi Központ',
+    options = {
+        {
+            title = 'Iratok igénylése',
+            description = 'Váltsd ki irataidat',
+            icon = 'id-card',
+            onSelect = function()
+                lib.showContext('iratok')
             end,
 
         },
@@ -102,3 +105,11 @@ function DrawText3D(coords, text)
     EndTextCommandDisplayText(0, 0)
     ClearDrawOrigin()
 end
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource == GetCurrentResourceName() then
+        if ped then
+            DeleteEntity(ped)
+        end
+    end
+end)
